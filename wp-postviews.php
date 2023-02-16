@@ -1046,3 +1046,26 @@ function register_rest_views_field(){
 		}
 	));
 }
+
+
+### Function: Add views meta field to orderby enum
+add_filter('rest_post_collection_params', 'add_rest_orderby_views_params', 10, 1);
+function add_rest_orderby_views_params($params)
+{
+	$params['orderby']['enum'][] = 'views';
+
+	return $params;
+}
+
+
+### Function: Set orderby query argument to views field
+add_filter('rest_post_query', 'set_rest_orderby_views', 10, 2);
+function set_rest_orderby_views($args, $request)
+{
+	$order_by = $request->get_param('orderby');
+	if (isset($order_by) && 'views' === $order_by) {
+		$args['meta_key'] = $order_by;
+		$args['orderby']  = 'meta_value_num';
+	}
+	return $args;
+}
